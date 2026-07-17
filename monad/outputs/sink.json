@@ -1,0 +1,9 @@
+{
+  "kind": "output",
+  "ref": "sink",
+  "type": "dev-null",
+  "name": "Elasticsearch",
+  "description": "Demonstration sink. dev-null discards all records — intentional for this demo. Swap type/settings/secrets for a real destination when needed (see examples/elasticsearch-output.json).",
+  "settings": {},
+  "secrets": {}
+}

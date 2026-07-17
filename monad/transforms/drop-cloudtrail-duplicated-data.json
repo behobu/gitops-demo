@@ -1,0 +1,17 @@
+{
+  "kind": "transform",
+  "ref": "drop-cloudtrail-duplicated-data",
+  "name": "Drop CloudTrail Duplicated Data",
+  "description": "Drops fields from CloudTrail logs whose values are duplicated elsewhere in the CloudTrail record.",
+  "config": {
+    "operations": [
+      { "operation": "drop_key", "description": "", "arguments": { "key": "userIdentity.sessionContext.sessionIssuer.accountId" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "recipientAccountId" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "additionalEventData.RequestDetails.awsServingRegion" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "userIdentity.invokedBy" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "userIdentity.sessionContext.sessionIssuer.principalId" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "userIdentity.sessionContext.sessionIssuer.userName" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "userIdentity.sessionContext.sessionIssuer.type" } }
+    ]
+  }
+}

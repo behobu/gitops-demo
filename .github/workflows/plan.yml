@@ -1,0 +1,66 @@
+name: monad-plan
+
+# Read-only reconcile plan. Runs on every PR that touches desired state and
+# posts the plan as a PR comment. Makes NO changes to the Monad instance.
+#
+# Uses the Claude Code CLI in headless print mode (`claude -p`). We do NOT use
+# anthropics/claude-code-action here: that action only handles interactive
+# events (@claude mentions, pull_request/issue events) and rejects the plain
+# automation triggers this GitOps flow needs.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "monad/**"
+      - ".monad-lock.json"
+      - "RECONCILE.md"
+
+permissions:
+  contents: read
+  pull-requests: write   # to post the plan comment
+
+concurrency:
+  group: monad-reconcile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Reconcile (plan)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MONAD_API_KEY: ${{ secrets.MONAD_API_KEY }}   # GET-only is sufficient for a plan
+        run: |
+          claude -p "MODE=plan. Read RECONCILE.md in the repository root and follow it exactly. You are in read-only plan mode: make zero POST/PATCH/DELETE calls to the Monad API and do not modify .monad-lock.json. Compare desired state under monad/** against the lockfile and the live Monad org (GET only), and write the plan to plan.md in the repo root." \
+            --output-format json \
+            --dangerously-skip-permissions \
+            --max-turns 50 \
+            --model sonnet \
+            | tee claude-result.json
+          # Surface a non-zero exit if the model reported an error.
+          if [ "$(jq -r '.is_error // false' claude-result.json)" = "true" ]; then
+            echo "::error::Reconciler reported is_error=true"; exit 1
+          fi
+
+      - name: Post plan as PR comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f plan.md ]; then
+            { echo '### Monad reconcile plan'; echo; echo '```'; cat plan.md; echo '```'; } > comment.md
+          else
+            { echo '### Monad reconcile plan'; echo; echo '⚠️ No plan.md was produced — the reconciler failed. Check the job logs.'; } > comment.md
+          fi
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md

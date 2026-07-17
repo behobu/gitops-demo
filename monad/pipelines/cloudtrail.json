@@ -1,0 +1,22 @@
+{
+  "kind": "pipeline",
+  "ref": "cloudtrail",
+  "name": "Cloudtrail",
+  "description": "",
+  "enabled": true,
+  "retention_policy": {
+    "stream_size_limit": "3Gi",
+    "stream_age_limit": 72
+  },
+  "nodes": [
+    { "slug": "cloudtrail-input",     "ref": "org-cloudtrail-logs",             "component_type": "input",     "enabled": true },
+    { "slug": "drop-low-value-fields", "ref": "drop-low-value-fields",          "component_type": "transform", "enabled": true },
+    { "slug": "drop-duplicated-data",  "ref": "drop-cloudtrail-duplicated-data", "component_type": "transform", "enabled": true },
+    { "slug": "sink",                  "ref": "sink",                           "component_type": "output",    "enabled": true }
+  ],
+  "edges": [
+    { "from": "cloudtrail-input",      "to": "drop-low-value-fields", "conditions": { "operator": "always" } },
+    { "from": "drop-low-value-fields", "to": "drop-duplicated-data",  "conditions": { "operator": "always" } },
+    { "from": "drop-duplicated-data",  "to": "sink",                  "conditions": { "operator": "always" } }
+  ]
+}

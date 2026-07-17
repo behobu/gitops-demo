@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "instance": "https://app.monad.com/api",
+  "organization_id": "1f371e3e-09f1-4bd3-8302-33d130d1c659",
+  "organization_name": "jfrog-417c",
+  "note": "Reconciler-managed. Maps '<kind>:<ref>' -> Monad server id. Seeded from live state on 2026-07-17. last_applied_hash is null so the first apply reconciles state (idempotent); the reconciler fills it in thereafter. Do not hand-edit ids.",
+  "components": {
+    "input:org-cloudtrail-logs":              { "id": "1ad0e257-524a-46e7-ab16-e2dad8595a6f", "last_applied_hash": null },
+    "transform:drop-low-value-fields":        { "id": "daf1fbc4-d690-4531-8162-c00233978530", "last_applied_hash": null },
+    "transform:drop-cloudtrail-duplicated-data": { "id": "d392b497-e022-4a61-ab5d-46cbb00770cc", "last_applied_hash": null },
+    "output:sink":                            { "id": "12ffb03b-d452-42f3-9836-9e0a8deb815d", "last_applied_hash": null },
+    "pipeline:cloudtrail":                    { "id": "1981fde9-616c-4c81-b55f-1f28b803cacc", "last_applied_hash": null }
+  }
+}

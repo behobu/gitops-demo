@@ -1,0 +1,72 @@
+name: monad-apply
+
+# Executes the reconcile after a PR is merged to main (or on manual dispatch),
+# then commits the updated lockfile back. This is the step that actually changes
+# the Monad instance.
+#
+# Uses the Claude Code CLI in headless print mode (`claude -p`) — see plan.yml
+# for why the interactive claude-code-action is not used here.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "monad/**"
+      - ".monad-lock.json"
+      - "RECONCILE.md"
+  workflow_dispatch: {}   # manual "Run workflow" button — fire an apply on demand (e.g. to self-heal UI-deleted objects)
+
+permissions:
+  contents: write   # to commit the updated lockfile back to main
+
+concurrency:
+  group: monad-reconcile-main   # never run two applies at once
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Reconcile (apply)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MONAD_API_KEY: ${{ secrets.MONAD_API_KEY }}
+          # --- GitHub-secrets pass-through for env: refs in monad/** files ---
+          # One line per "env:VAR" referenced in a component's settings/secrets.
+          MONAD_CT_BUCKET: ${{ secrets.MONAD_CT_BUCKET }}      # cloudtrail input: settings.bucket
+          MONAD_CT_ROLE_ARN: ${{ secrets.MONAD_CT_ROLE_ARN }}  # cloudtrail input: settings.role_arn
+          # Add more as needed, e.g. the Elasticsearch example output:
+          # MONAD_ES_USERNAME: ${{ secrets.MONAD_ES_USERNAME }}
+          # MONAD_ES_PASSWORD: ${{ secrets.MONAD_ES_PASSWORD }}
+        run: |
+          claude -p "MODE=apply. Read RECONCILE.md in the repository root and follow it exactly. Reconcile the Monad org to match the desired state under monad/**: create/update/prune per the contract (self-heal recreates objects whose lockfile id 404s), resolve any 'env:VAR' secrets from the environment, then write the updated .monad-lock.json. Never print secret values." \
+            --output-format json \
+            --dangerously-skip-permissions \
+            --max-turns 80 \
+            --model sonnet \
+            | tee claude-result.json
+          if [ "$(jq -r '.is_error // false' claude-result.json)" = "true" ]; then
+            echo "::error::Reconciler reported is_error=true"; exit 1
+          fi
+
+      - name: Commit updated lockfile
+        if: always()
+        run: |
+          if ! git diff --quiet -- .monad-lock.json; then
+            git config user.name  "monad-reconciler[bot]"
+            git config user.email "monad-reconciler@users.noreply.github.com"
+            git add .monad-lock.json
+            git commit -m "chore(reconcile): update lockfile after apply [skip ci]"
+            git push
+          else
+            echo "Lockfile unchanged — nothing to commit."
+          fi

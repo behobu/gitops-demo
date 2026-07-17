@@ -1,0 +1,16 @@
+{
+  "kind": "input",
+  "ref": "org-cloudtrail-logs",
+  "type": "cloudtrail",
+  "name": "Org CloudTrail Logs",
+  "description": "AWS CloudTrail control-plane events, read from the org CloudTrail S3 bucket via cross-account assume-role. bucket and role_arn are env: refs so the real AWS account id / role name stay out of this public repo (see RECONCILE.md §5).",
+  "settings": {
+    "backfill_start_time": "",
+    "bucket": "env:MONAD_CT_BUCKET",
+    "prefix": "",
+    "region": "us-west-2",
+    "role_arn": "env:MONAD_CT_ROLE_ARN",
+    "use_synthetic_data": false
+  },
+  "secrets": {}
+}

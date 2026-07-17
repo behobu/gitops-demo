@@ -1,0 +1,26 @@
+{
+  "kind": "transform",
+  "ref": "drop-low-value-fields",
+  "name": "Drop Low-Value Fields",
+  "description": "Drop fields from the CloudTrail records that provide little to no security detection or monitoring value.",
+  "config": {
+    "operations": [
+      { "operation": "drop_key", "description": "", "arguments": { "key": "requestID" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "sharedEventID" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "eventVersion" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "responseElements.credentials.sessionToken" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "responseElements.credentials.expiration" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "responseElements.credentials.accessKeyId" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "additionalEventData.ExtendedRequestId" } },
+      { "operation": "drop_key", "description": "", "arguments": { "key": "requestParameters.incomingTransitiveTags" } },
+      {
+        "operation": "jq",
+        "description": "Drop the dashed additionalEventData key (Drop Key UI rejects dashes)",
+        "arguments": {
+          "key": "",
+          "query": "del(.additionalEventData[\"x-amz-id-2\"])"
+        }
+      }
+    ]
+  }
+}

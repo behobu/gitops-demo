@@ -1,0 +1,16 @@
+{
+  "_comment": "EXAMPLE ONLY — lives under examples/ so the reconciler ignores it (it only reads monad/**). Copy into monad/outputs/ and wire into a pipeline to use. Shows the GitHub-secrets pass-through convention: a secret value of the form 'env:VAR_NAME' is resolved at APPLY time from the environment variable VAR_NAME, which the apply workflow populates from a GitHub Actions secret of the same name. Secret VALUES never live in git.",
+  "kind": "output",
+  "ref": "elasticsearch",
+  "type": "elasticsearch",
+  "name": "Elasticsearch (real)",
+  "description": "Example real destination with a secret pass-through.",
+  "settings": {
+    "endpoint": "https://es.example.internal:9200",
+    "index": "monad-cloudtrail"
+  },
+  "secrets": {
+    "username": "env:MONAD_ES_USERNAME",
+    "password": "env:MONAD_ES_PASSWORD"
+  }
+}

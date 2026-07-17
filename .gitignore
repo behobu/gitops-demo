@@ -1,0 +1,8 @@
+# Never commit resolved secret material or local env
+.env
+*.env
+secrets.*.json
+
+# Editor / OS noise
+.DS_Store
+*.swp
