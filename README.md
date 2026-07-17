@@ -71,9 +71,12 @@ shows how you'd swap in a real destination (with a secret) when you want one.
    existing `jfrog-417c` objects, blank out every `id` (set to `""`) so the first
    apply creates them.
 3. **Merge gate** on `main` — the `protect-main` ruleset (Settings → Rules →
-   Rulesets) requires a PR approved by someone other than the author, and lists
-   the GitHub Actions bot (app id 15368) as a bypass actor so the apply job's
-   lockfile commit can still push to `main`.
+   Rulesets) requires a PR approved by someone other than the author
+   (`required_approving_review_count: 1` + `require_last_push_approval`), blocks
+   force-pushes and deletion, and lists a **deploy key** as the only bypass
+   actor. The apply job checks out over that write-enabled deploy key
+   (`RECONCILER_SSH_KEY` secret), so its lockfile commit pushes to `main` past
+   the review rule while human pushes still require a reviewed PR.
 4. **Reconciler runtime.** The workflows install the Claude Code CLI
    (`npm install -g @anthropic-ai/claude-code`) and run it headless with
    `claude -p … --dangerously-skip-permissions --output-format json` on an
