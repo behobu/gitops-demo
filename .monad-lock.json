@@ -6,23 +6,23 @@
   "note": "Reconciler-managed. Maps '<kind>:<ref>' -> Monad server id. Seeded from live state on 2026-07-17. last_applied_hash is null so the first apply reconciles state (idempotent); the reconciler fills it in thereafter. Do not hand-edit ids.",
   "components": {
     "input:org-cloudtrail-logs": {
-      "id": "1ad0e257-524a-46e7-ab16-e2dad8595a6f",
+      "id": "f117e470-88d5-42aa-9a92-d94f02d8bfe0",
       "last_applied_hash": "d07ed1a1b8e77d2b9bc6866b6db61c6eaaf4ca955b0f06f78140801d34c89098"
     },
     "transform:drop-low-value-fields": {
-      "id": "daf1fbc4-d690-4531-8162-c00233978530",
+      "id": "9389d835-fae5-4910-aa23-2a90d088f203",
       "last_applied_hash": "a59c5dd0044f8d90665282712e7fd550fb6caf284a661f58750b31b2e16e82c6"
     },
     "transform:drop-cloudtrail-duplicated-data": {
-      "id": "d392b497-e022-4a61-ab5d-46cbb00770cc",
+      "id": "cf4aabfa-f217-42cd-b326-947bf7d0877f",
       "last_applied_hash": "3422d7517d7b9fc25e287b53be4ba28e8366593bd64811f5a961f4dc03d4f4e2"
     },
     "output:sink": {
-      "id": "12ffb03b-d452-42f3-9836-9e0a8deb815d",
+      "id": "983f3aa9-5ca9-47df-bae7-b03606720c7a",
       "last_applied_hash": "9cf0502dd9733e10dffea04852305190d9fa728ea1daf1798a7d099cba47b72d"
     },
     "pipeline:cloudtrail": {
-      "id": "1981fde9-616c-4c81-b55f-1f28b803cacc",
+      "id": "b55236eb-c8c2-4d43-b0fe-c9f6b9f011c0",
       "last_applied_hash": "80d184b684355c8b207181a9b790a501540c3b5c05748835dcd47eae7bf05441"
     }
   }
