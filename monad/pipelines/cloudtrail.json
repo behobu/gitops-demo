@@ -2,7 +2,7 @@
   "kind": "pipeline",
   "ref": "cloudtrail",
   "name": "Cloudtrail",
-  "description": "",
+  "description": "CloudTrail control-plane events, field-trimmed, to a demo sink.",
   "enabled": true,
   "retention_policy": {
     "stream_size_limit": "3Gi",
