@@ -3,7 +3,7 @@
   "instance": "https://app.monad.com/api",
   "organization_id": "1f371e3e-09f1-4bd3-8302-33d130d1c659",
   "organization_name": "jfrog-417c",
-  "note": "Reconciler-managed. Maps '<kind>:<ref>' -> Monad server id. Seeded from live state on 2026-07-17. last_applied_hash is null so the first apply reconciles state (idempotent); the reconciler fills it in thereafter. Do not hand-edit ids.",
+  "note": "Reconciler-managed. Maps '<kind>:<ref>' -> Monad server id. Apply run on 2026-07-17 confirmed all 5 components present live via GET and hash-matched against monad/** (no drift, no prune candidates). Do not hand-edit ids.",
   "components": {
     "input:org-cloudtrail-logs": {
       "id": "f117e470-88d5-42aa-9a92-d94f02d8bfe0",
