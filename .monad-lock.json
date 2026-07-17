@@ -23,7 +23,7 @@
     },
     "pipeline:cloudtrail": {
       "id": "b55236eb-c8c2-4d43-b0fe-c9f6b9f011c0",
-      "last_applied_hash": "80d184b684355c8b207181a9b790a501540c3b5c05748835dcd47eae7bf05441"
+      "last_applied_hash": "5d9e11256c5b6846a7d615cc4c5d224b28378747993f6bf55f978943c0429fc4"
     }
   }
 }
