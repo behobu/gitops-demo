@@ -91,6 +91,16 @@ repo is public, so both true secrets and sensitive-but-not-secret identifiers
   empty value.
 - **Never** print, echo, or log a resolved value — not in the plan, not in
   apply output, not in the PR comment. Always refer to it as `env:VAR_NAME`.
+- **Never emit a raw API response (or request) body for a component to stdout
+  or logs.** A `GET`/`POST`/`PATCH` on an input or output returns
+  `config.settings` — which may hold resolved sensitive values (e.g. a bucket or
+  role ARN). Redact **at the source**: pipe every such call through a filter that
+  strips those blocks before anything reaches the terminal, e.g.
+  `curl -s ... | jq 'del(.config.settings, .config.secrets)'`. Do not `curl` a
+  component endpoint without such a filter, do not `cat`/echo a saved response
+  body, and do not paste one into your reasoning output. This rule holds even
+  though CI secret-masking and the CLI tool sandbox usually contain such output
+  — do not rely on downstream masking.
 - Secrets are **write-only** in Monad: GET returns them redacted (`{}`), so you
   cannot diff them; they do **not** participate in hash/drift detection (§7) and
   you **always** re-send resolved secrets on any create/update. Env-sourced
